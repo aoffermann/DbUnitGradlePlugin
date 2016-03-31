@@ -28,7 +28,7 @@ public class DbUnitImportTask extends DefaultTask {
 
 		System.out.println("Starting DbUnit Import Task");
 		try {
-			
+
 			DbUnitPluginExtension extension = getProject().getExtensions().findByType(DbUnitPluginExtension.class);
 
 			if (extension == null) {
@@ -54,12 +54,12 @@ public class DbUnitImportTask extends DefaultTask {
 			// PostgreSql DataType Factory
 			databaseConnection.getConfig().setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY,
 					new PostgresqlDataTypeFactory());
-			
+
 			IDataSet dataSet = new FlatXmlDataSetBuilder().build(new FileInputStream(exportFilePath));
-	        DatabaseOperation.CLEAN_INSERT.execute(databaseConnection, dataSet);
-			
+			DatabaseOperation.CLEAN_INSERT.execute(databaseConnection, dataSet);
+
 			System.out.println("Successfully completed DbUnit Import Task");
-			
+
 		} catch (Exception e) {
 			System.out.println(e);
 			throw new TaskExecutionException(this,
