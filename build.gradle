@@ -1,0 +1,37 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'maven-publish'
+
+group = 'eu.offermann.gradle'
+version = '1.0.0'
+
+
+repositories {
+    mavenLocal()
+	mavenCentral()
+}
+
+dependencies {
+    compile gradleApi()
+    compile 'org.slf4j:slf4j-simple:1.6.1'
+    compile 'org.dbunit:dbunit:2.5.1'
+    compile 'org.postgresql:postgresql:9.3-1100-jdbc41'
+    testCompile 'junit:junit:4.11'
+}
+
+publishing {
+	publications {
+		maven(MavenPublication) {
+			groupId "$group"
+			artifactId 'dbUnitGradlePlugin'
+			version "$version"
+			from components.java
+		}
+	}
+}
+
+uploadArchives {
+    repositories {
+            mavenLocal()
+    }
+}
