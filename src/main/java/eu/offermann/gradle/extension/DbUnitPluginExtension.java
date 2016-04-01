@@ -1,7 +1,7 @@
 package eu.offermann.gradle.extension;
 
 /**
- * @author off
+ * @author Offermann Alexander
  *
  */
 public class DbUnitPluginExtension {
@@ -29,7 +29,7 @@ public class DbUnitPluginExtension {
 	/**
 	 * The Path to the export or import File
 	 */
-	private String filePath = "d:/dump.xml";
+	private String filePath = "d:/";
 
 	/**
 	 * @return the url

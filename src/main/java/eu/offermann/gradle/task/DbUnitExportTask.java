@@ -11,6 +11,7 @@ import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.FilteredDataSet;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.filter.ITableFilter;
+import org.dbunit.dataset.xml.FlatDtdDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSet;
 import org.dbunit.ext.postgresql.PostgresqlDataTypeFactory;
 import org.gradle.api.DefaultTask;
@@ -20,7 +21,7 @@ import org.gradle.api.tasks.TaskExecutionException;
 import eu.offermann.gradle.extension.DbUnitPluginExtension;
 
 /**
- * @author off
+ * @author Offermann Alexander
  *
  */
 public class DbUnitExportTask extends DefaultTask {
@@ -32,7 +33,7 @@ public class DbUnitExportTask extends DefaultTask {
 
 		try {
 
-			DbUnitPluginExtension extension = getProject().getExtensions().findByType(DbUnitPluginExtension.class);
+			DbUnitPluginExtension extension = (DbUnitPluginExtension) getProject().getExtensions().findByName("dbUnitExportExt");
 
 			if (extension == null) {
 				extension = new DbUnitPluginExtension();
@@ -50,7 +51,7 @@ public class DbUnitExportTask extends DefaultTask {
 			System.out.println("The export File Path is: {" + exportFilePath + "}");
 
 			// Database connection
-			Class driverClass = Class.forName(databaseDriver);
+			Class.forName(databaseDriver);
 			Connection jdbcConnection = DriverManager.getConnection(databaseUrl, databaseUser, databasePassword);
 			IDatabaseConnection databaseConnection = new DatabaseConnection(jdbcConnection);
 
@@ -60,7 +61,8 @@ public class DbUnitExportTask extends DefaultTask {
 
 			ITableFilter filter = new DatabaseSequenceFilter(databaseConnection);
 			IDataSet dataset = new FilteredDataSet(filter, databaseConnection.createDataSet());
-			FlatXmlDataSet.write(dataset, new FileOutputStream(exportFilePath));
+			FlatXmlDataSet.write(dataset, new FileOutputStream(exportFilePath + "dataset.xml"));
+			FlatDtdDataSet.write(dataset, new FileOutputStream(exportFilePath + "dataset.dtd"));
 
 			System.out.println("Successfully completed DbUnit Export Task");
 

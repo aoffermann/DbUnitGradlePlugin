@@ -8,15 +8,16 @@ import eu.offermann.gradle.task.DbUnitExportTask;
 import eu.offermann.gradle.task.DbUnitImportTask;
 
 /**
- * @author off
+ * @author Offermann Alexander
  *
  */
 public class DbUnitPlugin implements Plugin<Project> {
 
 	@Override
 	public void apply(Project target) {
-		target.getExtensions().create("dbUnitPluginExtension", DbUnitPluginExtension.class);
+		target.getExtensions().create("dbUnitExportExt", DbUnitPluginExtension.class);
 		target.getTasks().create("dbUnitExport", DbUnitExportTask.class);
+		target.getExtensions().create("dbUnitImportExt", DbUnitPluginExtension.class);
 		target.getTasks().create("dbUnitImport", DbUnitImportTask.class);
 	}
 }

@@ -8,6 +8,7 @@ import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.IDataSet;
+import org.dbunit.dataset.xml.FlatXmlDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.dbunit.ext.postgresql.PostgresqlDataTypeFactory;
 import org.dbunit.operation.DatabaseOperation;
@@ -18,7 +19,7 @@ import org.gradle.api.tasks.TaskExecutionException;
 import eu.offermann.gradle.extension.DbUnitPluginExtension;
 
 /**
- * @author off
+ * @author Offermann Alexander
  *
  */
 public class DbUnitImportTask extends DefaultTask {
@@ -29,7 +30,7 @@ public class DbUnitImportTask extends DefaultTask {
 		System.out.println("Starting DbUnit Import Task");
 		try {
 
-			DbUnitPluginExtension extension = getProject().getExtensions().findByType(DbUnitPluginExtension.class);
+			DbUnitPluginExtension extension = (DbUnitPluginExtension) getProject().getExtensions().findByName("dbUnitImportExt");
 
 			if (extension == null) {
 				extension = new DbUnitPluginExtension();
@@ -47,7 +48,7 @@ public class DbUnitImportTask extends DefaultTask {
 			System.out.println("The export File Path is: {" + exportFilePath + "}");
 
 			// Database connection
-			Class driverClass = Class.forName(databaseDriver);
+			Class.forName(databaseDriver);
 			Connection jdbcConnection = DriverManager.getConnection(databaseUrl, databaseUser, databasePassword);
 			IDatabaseConnection databaseConnection = new DatabaseConnection(jdbcConnection);
 
@@ -55,7 +56,11 @@ public class DbUnitImportTask extends DefaultTask {
 			databaseConnection.getConfig().setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY,
 					new PostgresqlDataTypeFactory());
 
-			IDataSet dataSet = new FlatXmlDataSetBuilder().build(new FileInputStream(exportFilePath));
+			FlatXmlDataSetBuilder dataSetBuilder = new FlatXmlDataSetBuilder();
+			dataSetBuilder.setColumnSensing(true);
+			dataSetBuilder.setMetaDataSetFromDtd(new FileInputStream(exportFilePath + "dataset.dtd"));
+			IDataSet dataSet = dataSetBuilder.build(new FileInputStream(exportFilePath + "dataset.xml"));
+			System.out.println(dataSet.toString());
 			DatabaseOperation.CLEAN_INSERT.execute(databaseConnection, dataSet);
 
 			System.out.println("Successfully completed DbUnit Import Task");
